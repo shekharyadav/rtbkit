@@ -59,6 +59,7 @@ struct OpenRTBBidRequestParser
         // further versions just have to redefine those methods
         virtual void onBidRequest(OpenRTB::BidRequest & br);
         virtual void onImpression(OpenRTB::Impression & imp);
+        virtual void onNative(OpenRTB::Native & native);
         virtual void onBanner(OpenRTB::Banner & banner);
         virtual void onVideo(OpenRTB::Video & video);
         virtual void onSite(OpenRTB::Site & site);
@@ -109,6 +110,7 @@ struct OpenRTBBidRequestParser2point2 : OpenRTBBidRequestParser {
     private :
         virtual void onBidRequest(OpenRTB::BidRequest & br);
         virtual void onImpression(OpenRTB::Impression & imp);
+        virtual void onNative(OpenRTB::Native & native);
         virtual void onBanner(OpenRTB::Banner & banner);
         virtual void onVideo(OpenRTB::Video & video);
         virtual void onDevice(OpenRTB::Device & device);

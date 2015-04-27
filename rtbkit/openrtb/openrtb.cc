@@ -73,4 +73,34 @@ Regulations::
 {
 }
 
+NativeTitle::
+~NativeTitle()
+{
+}
+
+NativeImage::
+~NativeImage()
+{
+}
+
+NativeVideo::
+~NativeVideo()
+{
+}
+
+NativeData::
+~NativeData()
+{
+}
+
+NativeAsset::
+~NativeAsset()
+{
+}
+
+Native::
+~Native()
+{
+}
+
 } // namespace OpenRTB

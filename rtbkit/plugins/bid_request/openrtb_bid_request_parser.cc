@@ -295,9 +295,59 @@ onImpression(OpenRTB::Impression & impression) {
         this->onVideo(*ctx.spot->video);
     }
 
+    // Native Ads API specification v1 (part of OpenRTB 2.3 spec)
+    if(ctx.spot->native) {
+        this->onNative(*ctx.spot->native);
+    }
+
     // TODO Support tagFilters / mime filers
 
     ctx.br->imp.emplace_back(*ctx.spot);
+}
+
+void
+OpenRTBBidRequestParser::
+onNative(OpenRTB::Native & native) {
+
+    if (native.version.value() < 1) {
+        LOG(OpenRTBBidRequestLogs::error) << "version must be specified and match a value in OpenRTB Native Ads API Specification v1" << endl;
+    }
+
+    if (native.asset.empty()) {
+        LOG(OpenRTBBidRequestLogs::error) << "Atleast one asset should be speficied in the Native Ad" << endl;
+    }
+
+    auto onAsset = [&] (const OpenRTB::NativeAsset & asset) {
+        if (asset.image) {
+            auto & ni = *asset.image;
+            Format format(ni.w.value(), ni.h.value());
+            ctx.spot->formats.push_back(format);
+        } else if (asset.video) {
+            auto & nv = *asset.video;
+
+            if (nv.mimes.empty()) {
+                LOG(OpenRTBBidRequestLogs::error) << "NativeVideo::mimes : Atleast one mimes type should be speficied" << endl;
+            }
+
+            if (nv.protocol.value() < 0  ||
+                nv.protocol.value() > 6) {
+                LOG(OpenRTBBidRequestLogs::error) << "NativeVideo::protocol must be psecified and match a value in OpenRTB Native Ads API specification v1" << endl;
+
+            }
+
+            if (nv.minduration.val < 0) {
+                LOG(OpenRTBBidRequestLogs::error) << "NativeVideo::minduration must be psecified and match a value in OpenRTB Native Ads API specification v1" << endl;
+            }
+
+            if (nv.maxduration.val < 0) {
+                LOG(OpenRTBBidRequestLogs::error) << "NativeVideo::maxduration must be psecified and match a value in OpenRTB Native Ads API specification v1" << endl;
+            }
+        }
+    };
+
+    for (const auto & a: native.asset) {
+        onAsset(a);
+    }
 }
 
 void
@@ -666,6 +716,13 @@ onImpression(OpenRTB::Impression & imp) {
     // Call V1
     OpenRTBBidRequestParser::onImpression(imp);
     
+}
+
+void
+OpenRTBBidRequestParser2point2::
+onNative(OpenRTB::Native & native) {
+
+    OpenRTBBidRequestParser::onNative(native);
 }
 
 void

@@ -591,6 +591,233 @@ struct AuctionType: public Datacratic::TaggedEnum<AuctionType, 2> {
     }
 };
 
+/*****************************************************************************/
+/* Native Markup Version                                                     */
+/*****************************************************************************/
+
+struct NativeVersion: public Datacratic::TaggedEnum<NativeVersion, 1> {
+    enum Vals {
+        UNSPECIFIED = -1,  ///< Not explicitly specified
+
+        VER1 = 1
+    };
+};
+
+/*****************************************************************************/
+/* Native Ad Unit Layout ID                                                  */
+/*****************************************************************************/
+
+/** 7.1 Layout ID
+
+    The following table lists the various options for the Layout ID; what
+    type of layout ad unit has. Note to the reader: This OpenRTB table has
+    values derived from the IAB Native Ads API Specification v1. Users of
+    OpenRTB should keep in synch with updates to the specification values
+    as published on IAB.net.
+*/
+
+struct NativeLayout: public Datacratic::TaggedEnum<NativeLayout> {
+    enum Vals {
+        UNSPECIFIED = -1,  ///< Not explicitly specified
+
+        CONTENT_WALL = 1,
+        APP_WALL = 2,
+        NEWS_FEED = 3,
+        CHAT_LIST = 4,
+        CAROUSEL = 5,
+        CONTENT_STREAM = 6,
+        GRID_ADJOINING_CONTENT = 7
+    };
+};
+
+/*****************************************************************************/
+/* Native Ad Unit                                                  */
+/*****************************************************************************/
+
+/** 7.2 Ad Unit ID
+
+    The following table lists the various options for the Ad Unit ID; what
+    type of ad unit it is. Note to the reader: This OpenRTB table has
+    values derived from the IAB Native Ads API Specification v1. Users of
+    OpenRTB should keep in synch with updates to the specification values
+    as published on IAB.net.
+*/
+
+struct NativeAdUnit: public Datacratic::TaggedEnum<NativeAdUnit> {
+    enum Vals {
+        UNSPECIFIED = -1,  ///< Not explicitly specified
+
+        PAID_SEARCH_UNIT = 1,
+        RECOMMENDATION_WIDGET = 2,
+        PROMOTIONAL_LISTING = 3,
+        INAD_NATIVE_ELEMENT_UNIT = 4,
+        CUSTOM = 5
+    };
+};
+
+/*****************************************************************************/
+/* Native Ad Image Type                                                      */
+/*****************************************************************************/
+
+/** 7.3 Image Type
+
+    The following table lists the various options for the Image Type; what
+    type of image it is. Note to the reader: This OpenRTB table has
+    values derived from the IAB Native Ads API Specification v1. Users of
+    OpenRTB should keep in synch with updates to the specification values
+    as published on IAB.net.
+*/
+
+struct NativeImageType: public Datacratic::TaggedEnum<NativeImageType> {
+    enum Vals {
+        UNSPECIFIED = -1,  ///< Not explicitly specified
+
+        ICON = 1,
+        LOGO = 2,
+        MAIN = 3
+    };
+};
+
+/*****************************************************************************/
+/* Native Ad Data Type                                                      */
+/*****************************************************************************/
+
+/** 7.4 Data Type
+
+    The following table lists the various options for the Data Type; what
+    type of data it is. Note to the reader: This OpenRTB table has
+    values derived from the IAB Native Ads API Specification v1. Users of
+    OpenRTB should keep in synch with updates to the specification values
+    as published on IAB.net.
+*/
+
+struct NativeDataType: public Datacratic::TaggedEnum<NativeDataType> {
+    enum Vals {
+        UNSPECIFIED = -1,  ///< Not explicitly specified
+
+        SPONSORED = 1,
+        DESCRIPTIVE = 2,
+        RATING = 3,
+        LIKES = 4,
+        DOWNLOADS = 5,
+        PRICE = 6,
+        SALEPRICE = 7,
+        PHONE = 8,
+        ADDRESS = 9,
+        DESCRIPTIVE_2 = 10,
+        DISPLAYURL = 11,
+        CTATEXT = 12
+    };
+};
+
+/*****************************************************************************/
+/* Native Data Asset                                                         */
+/*****************************************************************************/
+
+/** 4.6 Data Asset Object
+    The Data Object is to be used for all non-core elements of the native unit
+    such as Ratings, Review Count, Stars, Download count, descriptions etc
+*/
+struct NativeData {
+    ~NativeData();
+    NativeDataType type;    ///< Data Asset type
+    Datacratic::TaggedInt len;  ///< Length of the data
+    Json::Value ext;    ///< Extended fields outside of protocol
+};
+
+/*****************************************************************************/
+/* Native Video Asset                                                        */
+/*****************************************************************************/
+
+/** 4.5 Video Asset Object
+    The video object to be used for all video elements supported in the Native
+    Ad. This corresponds to the Video object of OpenRTB 2.3. Exchange
+    implementors can impose their own specific restrictions
+*/
+struct NativeVideo {
+    ~NativeVideo();
+    Datacratic::List<MimeType> mimes;   ///< Content MIME types supported
+    Datacratic::TaggedInt minduration;  ///< Minimum duration in seconds
+    Datacratic::TaggedInt maxduration;  ///< Maximum duration in seconds
+    VideoBidResponseProtocol protocol;  ///< Bid response protocols supported
+    Json::Value ext;                    ///< Extended fields outside of protocol
+};
+
+/*****************************************************************************/
+/* Native Image Asset                                                        */
+/*****************************************************************************/
+
+/** 4.4 Image Asset Object
+    The Image object to be used for all image elements of the Native ad such
+    as Icons, Main Image, etc.
+*/
+struct NativeImage {
+    ~NativeImage();
+    NativeImageType type;   ///< Image type
+    Datacratic::TaggedInt w;    ///< Width of the Image
+    Datacratic::TaggedInt h;    ///< Height of the Image
+    Datacratic::TaggedInt wmin; ///< Minimum Image width
+    Datacratic::TaggedInt hmin; ///< Minimum Image height
+    Datacratic::List<MimeType> mimes;   ///< Content MIME types supported
+    Json::Value ext;    ///< Extended fields outside of protocol
+};
+
+/*****************************************************************************/
+/* Native Title Asset                                                        */
+/*****************************************************************************/
+
+/** 4.3 Title Asset Objecta
+    The Title object is to be used for title element of the Native ad.
+*/
+struct NativeTitle {
+    ~NativeTitle();
+    Datacratic::TaggedInt len;  ///< Length of the Title
+    Json::Value ext;    ///< Extended fields outside of protocol
+};
+
+
+/*****************************************************************************/
+/* Native Asset                                                              */
+/*****************************************************************************/
+
+/** 4.2 Asset Object
+
+    The main container object for each asset requested or supported by Exchange
+    on behalf of the rendering client. Only one of the {title, image, video,
+    data} object should be present in each object. All others should be null/
+    absent. The "id" should be unique within AssetObject array so that response
+    can be aligned.
+*/
+struct NativeAsset {
+    ~NativeAsset();
+    Datacratic::TaggedInt id;   ///< Asset ID
+    Datacratic::TaggedBoolDef<0> required;   ///< req flag for asset: 1 (required) 0 (not required)
+    Datacratic::Optional<NativeTitle> title;  ///< Title information if Title Asset
+    Datacratic::Optional<NativeImage> image;  ///< Image information if Image Asset
+    Datacratic::Optional<NativeVideo> video;  ///< Video information if Video Asset
+    Datacratic::Optional<NativeData> data;    ///< Data information if Data Asset
+    Json::Value ext;                          ///< Extended fields outside of protocol
+};
+
+/*****************************************************************************/
+/* Native Ad Markup                                                          */
+/*****************************************************************************/
+
+/** 4.1 Native Object
+
+    The â€œnativeâ€ object must be included directly in the impression object
+    if the impression offered for auction is a native ad format.
+*/
+struct Native {
+    ~Native();
+    NativeVersion version;  ///< Version of the Native Markup
+    NativeLayout layout;    ///< Layout Id of the Native Ad unit
+    NativeAdUnit adunit;    ///< Ad unit Id of the Native Ad unit
+    Datacratic::TaggedIntDef<1> placementcnt;   ///< Number of identical placements
+    Datacratic::TaggedIntDef<0> sequence;   ///< Sequence of the the Ad
+    std::vector<NativeAsset> asset;     ///< List of Assets
+    Json::Value ext;    ///< Extended fields outside of protocol
+};
 
 /*****************************************************************************/
 /* BANNER                                                                    */
@@ -761,6 +988,7 @@ struct Impression {
     Datacratic::Id id;                             ///< Impression ID within BR
     Datacratic::Optional<Banner> banner;           ///< If it's a banner ad
     Datacratic::Optional<Video> video;             ///< If it's a video ad
+    Datacratic::Optional<Native> native;           ///< if it's a native ad
     Datacratic::UnicodeString displaymanager;          ///< What renders the ad
     Datacratic::UnicodeString displaymanagerver;        ///< What version of that thing
     Datacratic::TaggedBoolDef<0> instl;            ///< Is it interstitial

@@ -62,6 +62,7 @@ DefaultDescription()
              new StringIdDescription());
     addField("banner", &Impression::banner, "Banner information if a banner ad");
     addField("video", &Impression::video, "Video information if a video ad");
+    addField("native", &Impression::native, "Native information if a native ad");
     addField("displaymanager", &Impression::displaymanager, "Display manager that renders the ad");
     addField("displaymanagerver", &Impression::displaymanagerver, "Version of the display manager");
     addField("instl", &Impression::instl, "Is the ad interstitial");
@@ -365,5 +366,66 @@ DefaultDescription()
     addField("ext", &Regulations::ext, "Extensions");
 }
 
+
+DefaultDescription<OpenRTB::NativeTitle>::
+DefaultDescription()
+{
+    addField("len", &NativeTitle::len, "Length of the Title");
+    addField("ext", &NativeTitle::ext, "Extended fields outside of protocol");
+}
+
+DefaultDescription<OpenRTB::NativeImage>::
+DefaultDescription()
+{
+    addField("type", &NativeImage::type, "Image type");
+    addField("w", &NativeImage::w, "Width of the Image");
+    addField("h", &NativeImage::h, "Height of the Image");
+    addField("wmin", &NativeImage::wmin, "Minimum Image width");
+    addField("hmin", &NativeImage::hmin, "Minimum Image height");
+    addField("mimes", &NativeImage::mimes, "Content MIME types supported");
+    addField("ext", &NativeImage::ext, "Extended fields outside of protocol");
+}
+
+DefaultDescription<OpenRTB::NativeVideo>::
+DefaultDescription()
+{
+    addField("mimes", &NativeVideo::mimes, "Content MIME types supported");
+    addField("minduration", &NativeVideo::minduration, "Minimum duration in seconds");
+    addField("maxduration", &NativeVideo::maxduration, "Maximum duration in seconds");
+    addField("protocol", &NativeVideo::protocol, "Bid response protocols supported");
+    addField("ext", &NativeVideo::ext, "Extended fields outside of protocol");
+}
+
+DefaultDescription<OpenRTB::NativeData>::
+DefaultDescription()
+{
+    addField("type", &NativeData::type, "Data Asset type");
+    addField("len", &NativeData::len, "Length of the data");
+    addField("ext", &NativeData::ext, "Extended fields outside of protocol");
+}
+
+DefaultDescription<OpenRTB::NativeAsset>::
+DefaultDescription()
+{
+    addField("id", &NativeAsset::id, "Asset ID");
+    addField("required", &NativeAsset::required, "req flag for asset: 1 (required) 0 (not required)");
+    addField("title", &NativeAsset::title, "Title information if Title Asset");
+    addField("image", &NativeAsset::image, "Image information if Image Asset");
+    addField("video", &NativeAsset::video, "Video information if Video Asset");
+    addField("data", &NativeAsset::data, "Data information if Data Asset");
+    addField("ext", &NativeAsset::ext, "Extended fields outside of protocol");
+};
+
+DefaultDescription<OpenRTB::Native>::
+DefaultDescription()
+{
+    addField("version", &Native::version, "Version of the Native Markup");
+    addField("layout", &Native::layout, "Layout Id of the Native Ad unit");
+    addField("adunit", &Native::adunit, "Ad unit Id of the Native Ad unit");
+    addField("placementcnt", &Native::placementcnt, "Number of identical placements");
+    addField("sequence", &Native::sequence, "Sequence of the the Ad");
+    addField("asset", &Native::asset, "Assets");
+    addField("ext", &Native::ext, "Extended fields outside of protocol");
+}
 
 } // namespace Datacratic

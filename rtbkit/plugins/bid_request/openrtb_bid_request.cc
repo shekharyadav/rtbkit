@@ -132,6 +132,53 @@ fromOpenRtb(OpenRTB::BidRequest && req,
 
                 Format format(v.w.value(), v.h.value());
                 spot.formats.push_back(format);
+            } else if(spot.native) {
+                auto & n = *spot.native;
+
+                if (n.version.value() < 1) {
+                    THROW(openrtbBidRequestError) << "Native::version must be specified and match a value in OpenRTB Native Ads API Specification v1" << endl;
+                }
+
+                if (n.asset.empty()) {
+                    THROW(openrtbBidRequestError) << "Native::asset : Atleast one asset should be speficied in the Native Ad" << endl;
+                }
+
+                auto onAsset = [&] (const OpenRTB::NativeAsset & asset) {
+                    if (asset.image) {
+                        auto & ni = *asset.image;
+                        Format format(ni.w.value(), ni.h.value());
+                        spot.formats.push_back(format);
+                    } else if (asset.video) {
+                        auto & nv = *asset.video;
+
+                        if (nv.mimes.empty()) {
+                            THROW(openrtbBidRequestError) << "NativeVideo::mimes : Atleast one mimes type should be speficied" << endl;
+                        }
+
+                        if (nv.protocol.value() < 0  ||
+                            nv.protocol.value() > 6) {
+                            THROW(openrtbBidRequestError) << "NativeVideo::protocol must be psecified and match a value in OpenRTB Native Ads API specification v1" << endl;
+
+                        }
+
+                        if (nv.minduration.val < 0) {
+                            THROW(openrtbBidRequestError) << "NativeVideo::minduration must be psecified and match a value in OpenRTB Native Ads API specification v1" << endl;
+                        }
+
+                        if (nv.maxduration.val < 0) {
+                            THROW(openrtbBidRequestError) << "NativeVideo::maxduration must be psecified and match a value in OpenRTB Native Ads API specification v1" << endl;
+                        }
+
+                        if (nv.maxduration.val < nv.minduration.val) {
+                            THROW(openrtbBidRequestError) << "NativeVideo::maxduration can't be smaller than NativeVideo::minduration." << endl;
+
+                        }
+                    }
+                };
+
+                for (const auto & a: n.asset) {
+                    onAsset(a);
+                }
             }
 
 #if 0
@@ -168,6 +215,8 @@ fromOpenRtb(OpenRTB::BidRequest && req,
                     
                 }
             
+            }
+
             if (!imp.displaymanager.empty()) {
                 tags.add("displayManager", imp.displaymanager);
             }

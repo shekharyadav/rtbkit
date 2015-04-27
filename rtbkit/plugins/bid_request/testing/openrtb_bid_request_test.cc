@@ -37,12 +37,14 @@ vector<string> samples = {
     "rtbkit/plugins/bid_request/testing/rubicon_desktop.json",
     "rtbkit/plugins/bid_request/testing/rubicon_mobile_app.json",
     "rtbkit/plugins/bid_request/testing/rubicon_mobile_web.json",
-    "rtbkit/plugins/bid_request/testing/rubicon_test1.json"
+    "rtbkit/plugins/bid_request/testing/rubicon_test1.json",
+    "rtbkit/plugins/bid_request/testing/openrtb_native.json"
 };
 
 vector<string> samples2_2 = {
     "rtbkit/plugins/bid_request/testing/openrtb_2_2_req_imp.json",
-    "rtbkit/plugins/bid_request/testing/openrtb_2_2_req_video.json"
+    "rtbkit/plugins/bid_request/testing/openrtb_2_2_req_video.json",
+    "rtbkit/plugins/bid_request/testing/openrtb_2_2_req_native.json"
 };
 
 
