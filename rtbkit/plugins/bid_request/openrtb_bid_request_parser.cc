@@ -25,7 +25,7 @@ namespace { const char* DefaultVersion = "2.2"; }
 
 std::unique_ptr<OpenRTBBidRequestParser>
 OpenRTBBidRequestParser::
-openRTBBidRequestParserFactory(const std::string & version) 
+openRTBBidRequestParserFactory(const std::string & version)
 {
 
     if(version == "2.0" || version == "2.1") {
@@ -105,7 +105,7 @@ toBidRequest(const RTBKIT::BidRequest & br) {
     std::vector<std::string> wseat;
 
     wseatSegments.forEach([&](int, const std::string & str, float) {
-        wseat.push_back(str);        
+        wseat.push_back(str);
     });
 
     return result;
@@ -143,7 +143,7 @@ createBidRequestHelper(OpenRTB::BidRequest & br,
 
     // Create context
     ctx.br = std::unique_ptr<BidRequest>(new BidRequest());
-    
+
     ctx.br->timestamp = Date::now();
     ctx.br->isTest = false;
     // Assign provider and exchange if available
@@ -189,7 +189,7 @@ parseBidRequest(const std::string & json,
                                   exchange);
 }
 
-void 
+void
 OpenRTBBidRequestParser::
 onBidRequest(OpenRTB::BidRequest & br) {
 
@@ -215,7 +215,7 @@ onBidRequest(OpenRTB::BidRequest & br) {
     // Should only contain site or app
     if (br.site && br.app)
         THROW(OpenRTBBidRequestLogs::error) << " can't have site and app in one openrtb bid request" << endl;
-    
+
     if (br.site) {
         // Contains one site object
         this->onSite(*br.site);
@@ -236,7 +236,7 @@ onBidRequest(OpenRTB::BidRequest & br) {
         this->onDevice(*br.device);
     }
 
-    // Do we have an ID_PROVIDER (stored as "prov" key) in ctx.br->userIds? 
+    // Do we have an ID_PROVIDER (stored as "prov" key) in ctx.br->userIds?
     if(ctx.br->userIds.count("prov") == 0)
         // 4) Add Id(0) since it's required.
         ctx.br->userIds.add(Id(0), ID_PROVIDER);
@@ -275,7 +275,7 @@ onBidRequest(OpenRTB::BidRequest & br) {
 
 }
 
-void 
+void
 OpenRTBBidRequestParser::
 onImpression(OpenRTB::Impression & impression) {
 
@@ -283,7 +283,7 @@ onImpression(OpenRTB::Impression & impression) {
 /*
     if(!ctx.spot->banner && !ctx.spot->video)
         LOG(openrtbBidRequestError) << "br.imp must included either a video or a banner object." << endl;
-*/  
+*/
     // Possible to have a video and a banner object.
     if(ctx.spot->banner) {
         this->onBanner(*ctx.spot->banner);
@@ -309,17 +309,15 @@ void
 OpenRTBBidRequestParser::
 onNative(OpenRTB::Native & native) {
 
-    if (native.version.value() < 1) {
-        LOG(OpenRTBBidRequestLogs::error) << "version must be specified and match a value in OpenRTB Native Ads API Specification v1" << endl;
-    }
+    auto nreq = native.requestobj;
 
-    if (native.asset.empty()) {
+    if (nreq.assets.empty()) {
         LOG(OpenRTBBidRequestLogs::error) << "Atleast one asset should be speficied in the Native Ad" << endl;
     }
 
     auto onAsset = [&] (const OpenRTB::NativeAsset & asset) {
-        if (asset.image) {
-            auto & ni = *asset.image;
+        if (asset.img) {
+            auto & ni = *asset.img;
             Format format(ni.w.value(), ni.h.value());
             ctx.spot->formats.push_back(format);
         } else if (asset.video) {
@@ -345,7 +343,7 @@ onNative(OpenRTB::Native & native) {
         }
     };
 
-    for (const auto & a: native.asset) {
+    for (const auto & a: nreq.assets) {
         onAsset(a);
     }
 }
@@ -378,10 +376,10 @@ onBanner(OpenRTB::Banner & banner) {
     ctx.spot->position = banner.pos;
 }
 
-void 
+void
 OpenRTBBidRequestParser::
 onVideo(OpenRTB::Video & video) {
-    
+
     if(video.mimes.empty()) {
         //LOG(OpenRTBBidRequestLogs::error) << "br.imp.video.mimes needs to be populated." << endl;
         video.mimes.push_back(OpenRTB::MimeType("application/octet-stream"));
@@ -408,7 +406,7 @@ onVideo(OpenRTB::Video & video) {
     } else if (video.maxduration.val < video.minduration.val) {
         // Illogical
         THROW(OpenRTBBidRequestLogs::error) << "br.imp.video.maxduration can't be smaller than br.imp.video.minduration." << endl;
-    } 
+    }
 
     ctx.spot->position = video.pos;
 
@@ -439,7 +437,7 @@ OpenRTBBidRequestParser::
 onApp(OpenRTB::App & app) {
 
     this->onContext(app);
-    
+
     // Try to define url since we use it in RTBKIT::BidRequest
     if(!app.bundle.empty())
         ctx.br->url = Url(app.bundle);
@@ -451,7 +449,7 @@ onApp(OpenRTB::App & app) {
 void
 OpenRTBBidRequestParser::
 onContext(OpenRTB::Context & context) {
-    
+
     // Adding IAB categories to segments for filtering
     for(auto & v : context.cat) {
         ctx.br->segments.add("iab-categories", v.val);
@@ -477,7 +475,7 @@ onContext(OpenRTB::Context & context) {
 
 }
 
-void 
+void
 OpenRTBBidRequestParser::
 onContent(OpenRTB::Content & content) {
     // Nothing for now
@@ -489,7 +487,7 @@ onProducer(OpenRTB::Producer & producer) {
     // Nothing for now
 }
 
-void 
+void
 OpenRTBBidRequestParser::
 onPublisher(OpenRTB::Publisher & publisher) {
     // Nothing for now
@@ -501,7 +499,7 @@ onDevice(OpenRTB::Device & device) {
 
     ctx.br->language = device.language;
     ctx.br->userAgent = device.ua;
-    
+
     if(!device.ip.empty())
         ctx.br->ipAddress = device.ip;
     else if(!device.ipv6.empty())
@@ -529,23 +527,23 @@ onGeo(OpenRTB::Geo & geo) {
 
     // Validation that lat is -90 to 90
     if(geo.lat.val > 90.0 || geo.lat.val < -90.0)
-        LOG(OpenRTBBidRequestLogs::trace) << " br.device.geo.lat : " << geo.lat.val << 
-                                             " is invalid and should be within -90 to 90." << " ReqID: " << ctx.br->auctionId << endl; 
+        LOG(OpenRTBBidRequestLogs::trace) << " br.device.geo.lat : " << geo.lat.val <<
+                                             " is invalid and should be within -90 to 90." << " ReqID: " << ctx.br->auctionId << endl;
 
 
     // Validation that lat is -180 to 180
     if(geo.lon.val > 180.0 || geo.lon.val < -180.0)
-        LOG(OpenRTBBidRequestLogs::trace) << " br.device.geo.lon : " << geo.lon.val << 
-                                             " is invalid and should be within -180 to 180." << " ReqID: " << ctx.br->auctionId << endl; 
+        LOG(OpenRTBBidRequestLogs::trace) << " br.device.geo.lon : " << geo.lon.val <<
+                                             " is invalid and should be within -180 to 180." << " ReqID: " << ctx.br->auctionId << endl;
 
     // Validate ISO-3166 Alpha 3 for country
     if(!geo.country.empty()) {/*
-        if(geo.country.size() != 3) 
-            LOG(OpenRTBBidRequest::trace) << " br.device.geo.country : " << geo.country <<  
+        if(geo.country.size() != 3)
+            LOG(OpenRTBBidRequest::trace) << " br.device.geo.country : " << geo.country <<
                                              " is invalid and doesn't respect ISO-3166 1 Alpha-3" << endl;
-*/      
+*/
         // TODO
-        // Maybe create a map / flat file with the valid codes and test against it 
+        // Maybe create a map / flat file with the valid codes and test against it
         if(loc.countryCode.empty())
             loc.countryCode = geo.country;
     }
@@ -602,7 +600,7 @@ onUser(OpenRTB::User & user) {
     // 3) At the BR level, we will validate we have a user ID.
     //    If not, we will use ip/ua hash
     //    Done onDevice()
-    
+
     /*if(user.yob.val != -1) {
         // Nothing for now
     }*/
@@ -615,11 +613,11 @@ onUser(OpenRTB::User & user) {
             user.gender = std::toupper(user.gender[0]);
 
             if(user.gender.compare("M") == 0) {
-            
+
             } else if(user.gender.compare("F") == 0) {
             } else if(user.gender.compare("O") == 0) {
             } else {
-                LOG(OpenRTBBidRequestLogs::trace) << " br.user.gender : " << user.gender <<  
+                LOG(OpenRTBBidRequestLogs::trace) << " br.user.gender : " << user.gender <<
                                                      "is invalid. It should be either 'M' 'F' 'O' or null/empty" << endl;
             }
         } else {
@@ -627,7 +625,7 @@ onUser(OpenRTB::User & user) {
             // According to the spec, unknown should be null (or empty).
             if(!(user.gender.compare("unknown") || user.gender.compare("UNKNOWN")))
                 // Invalid gender
-                LOG(OpenRTBBidRequestLogs::trace) << " br.user.gender : " << user.gender << 
+                LOG(OpenRTBBidRequestLogs::trace) << " br.user.gender : " << user.gender <<
                                                      "is invalid. It should be either 'M' 'F' 'O' or null/empty" << endl;
         }
 
@@ -669,11 +667,11 @@ onData(OpenRTB::Data & data) {
             // Values with no name
             values.push_back("unknown_segment");
     }
-    
+
     ctx.br->segments.addStrings(key, values);
 }
 
-void 
+void
 OpenRTBBidRequestParser::
 onSegment(OpenRTB::Segment & segment) {
     LOG(OpenRTBBidRequestLogs::error) << "onSegment : Not used / Not implemented." << endl;
@@ -707,7 +705,7 @@ OpenRTBBidRequestParser2point2::
 onImpression(OpenRTB::Impression & imp) {
 
     // Deal with secure, business logic
-    
+
     // Deal with PMP
     if(imp.pmp) {
         this->onPMP(*imp.pmp);
@@ -715,7 +713,7 @@ onImpression(OpenRTB::Impression & imp) {
 
     // Call V1
     OpenRTBBidRequestParser::onImpression(imp);
-    
+
 }
 
 void
@@ -730,7 +728,7 @@ OpenRTBBidRequestParser2point2::
 onBanner(OpenRTB::Banner & banner) {
 
     // Business logic around w/h min/max
-    
+
     // Call V1
     OpenRTBBidRequestParser::onBanner(banner);
 }
@@ -758,7 +756,7 @@ onVideo(OpenRTB::Video & video) {
     } else if (video.maxduration.val < video.minduration.val) {
         // Illogical
         THROW(OpenRTBBidRequestLogs::error22) << "br.imp.video.maxduration can't be smaller than br.imp.video.minduration." << endl;
-    } 
+    }
 
     ctx.spot->position = video.pos;
 

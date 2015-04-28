@@ -374,26 +374,16 @@ DefaultDescription()
     addField("ext", &NativeTitle::ext, "Extended fields outside of protocol");
 }
 
-DefaultDescription<OpenRTB::NativeImage>::
+DefaultDescription<OpenRTB::NativeImg>::
 DefaultDescription()
 {
-    addField("type", &NativeImage::type, "Image type");
-    addField("w", &NativeImage::w, "Width of the Image");
-    addField("h", &NativeImage::h, "Height of the Image");
-    addField("wmin", &NativeImage::wmin, "Minimum Image width");
-    addField("hmin", &NativeImage::hmin, "Minimum Image height");
-    addField("mimes", &NativeImage::mimes, "Content MIME types supported");
-    addField("ext", &NativeImage::ext, "Extended fields outside of protocol");
-}
-
-DefaultDescription<OpenRTB::NativeVideo>::
-DefaultDescription()
-{
-    addField("mimes", &NativeVideo::mimes, "Content MIME types supported");
-    addField("minduration", &NativeVideo::minduration, "Minimum duration in seconds");
-    addField("maxduration", &NativeVideo::maxduration, "Maximum duration in seconds");
-    addField("protocol", &NativeVideo::protocol, "Bid response protocols supported");
-    addField("ext", &NativeVideo::ext, "Extended fields outside of protocol");
+    addField("type", &NativeImg::type, "Image type");
+    addField("w", &NativeImg::w, "Width of the Image");
+    addField("wmin", &NativeImg::wmin, "Minimum Image width");
+    addField("h", &NativeImg::h, "Height of the Image");
+    addField("hmin", &NativeImg::hmin, "Minimum Image height");
+    addField("mimes", &NativeImg::mimes, "Content MIME types supported");
+    addField("ext", &NativeImg::ext, "Extended fields outside of protocol");
 }
 
 DefaultDescription<OpenRTB::NativeData>::
@@ -410,21 +400,32 @@ DefaultDescription()
     addField("id", &NativeAsset::id, "Asset ID");
     addField("required", &NativeAsset::required, "req flag for asset: 1 (required) 0 (not required)");
     addField("title", &NativeAsset::title, "Title information if Title Asset");
-    addField("image", &NativeAsset::image, "Image information if Image Asset");
+    addField("img", &NativeAsset::img, "Image information if Image Asset");
     addField("video", &NativeAsset::video, "Video information if Video Asset");
     addField("data", &NativeAsset::data, "Data information if Data Asset");
     addField("ext", &NativeAsset::ext, "Extended fields outside of protocol");
 };
 
+DefaultDescription<OpenRTB::NativeRequestObj>::
+DefaultDescription()
+{
+
+    addField("ver", &NativeRequestObj::ver, "Version of the Native Markup");
+    addField("layout", &NativeRequestObj::layout, "Layout Id of the Native Ad unit");
+    addField("adunit", &NativeRequestObj::adunit, "Ad unit Id of the Native Ad unit");
+    addField("plcmtcnt", &NativeRequestObj::plcmtcnt, "Number of identical placements");
+    addField("seq", &NativeRequestObj::seq, "Sequence of the the Ad");
+    addField("assets", &NativeRequestObj::assets, "Assets");
+    addField("ext", &NativeRequestObj::ext, "Extended fields outside of protocol");
+}
+
 DefaultDescription<OpenRTB::Native>::
 DefaultDescription()
 {
-    addField("version", &Native::version, "Version of the Native Markup");
-    addField("layout", &Native::layout, "Layout Id of the Native Ad unit");
-    addField("adunit", &Native::adunit, "Ad unit Id of the Native Ad unit");
-    addField("placementcnt", &Native::placementcnt, "Number of identical placements");
-    addField("sequence", &Native::sequence, "Sequence of the the Ad");
-    addField("asset", &Native::asset, "Assets");
+    addField("ver", &Native::ver, "Version of the Native Markup");
+    addField("battr", &Native::battr, "Blocked creative attributes");
+    addField("api", &Native::api, "Supported APIs");
+    addField("requestobj", &Native::requestobj, "Native Request Markup");
     addField("ext", &Native::ext, "Extended fields outside of protocol");
 }
 

@@ -72,16 +72,16 @@ fromOpenRtb(OpenRTB::BidRequest && req,
 
             // Copy the ad formats in for the moment
             if (spot.banner) {
-                
+
                 for (unsigned i = 0;  i < spot.banner->w.size();  ++i) {
                     spot.formats.push_back(Format(spot.banner->w[i],
                                                  spot.banner->h[i]));
                 }
 		parseSDKs(spot, *result.get());
                 spot.position = spot.banner->pos;
-            
+
             } else if (spot.video) {
-                
+
                 // Unique ptr doesn't overload operators.. great.
                 auto & v = *spot.video;
 
@@ -90,9 +90,9 @@ fromOpenRtb(OpenRTB::BidRequest && req,
                     //LOG(openrtbBidRequestError) << "Video::mimes needs to be populated." << endl;
                     v.mimes.push_back(OpenRTB::MimeType("application/octet-stream"));
                 }
-            
+
                 if(version == "2.1") {
-                    /** 
+                    /**
                     * Refers to table 6.6 of OpenRTB 2.1
                     * Linearity is initialized to -1 if we don't get it in the bid request
                     * so if it's under 0, it means it wasn't given and it can only be 1 or 2
@@ -102,13 +102,13 @@ fromOpenRtb(OpenRTB::BidRequest && req,
                         //LOG(openrtbBidRequestError) <<"Video::linearity has been set to UNSPECIFIED." << endl;
                         v.linearity.val = -1;
                     }
-                
-                    /** 
+
+                    /**
                     * Refers to table 6.7 of OpenRTB 2.1
                     * Linearity is initialized to -1 if we don't get it in the bid request
                     * so if it's under -1, it means it wasn't given and it can only be 1 to 6
                     */
-                
+
                     if(v.protocol.value() < 0 || v.protocol.value() > 6) {
                         //LOG(openrtbBidRequestError) << "Video::protocol must be specified and match a value in OpenRTB 2.1 Table 6.7." << endl;
                         //LOG(openrtbBidRequestError) <<"Video::protocol has been set to UNSPECIFIED." << endl;
@@ -134,18 +134,15 @@ fromOpenRtb(OpenRTB::BidRequest && req,
                 spot.formats.push_back(format);
             } else if(spot.native) {
                 auto & n = *spot.native;
+                auto & nreq = n.requestobj;
 
-                if (n.version.value() < 1) {
-                    THROW(openrtbBidRequestError) << "Native::version must be specified and match a value in OpenRTB Native Ads API Specification v1" << endl;
-                }
-
-                if (n.asset.empty()) {
+                if (nreq.assets.empty()) {
                     THROW(openrtbBidRequestError) << "Native::asset : Atleast one asset should be speficied in the Native Ad" << endl;
                 }
 
                 auto onAsset = [&] (const OpenRTB::NativeAsset & asset) {
-                    if (asset.image) {
-                        auto & ni = *asset.image;
+                    if (asset.img) {
+                        auto & ni = *asset.img;
                         Format format(ni.w.value(), ni.h.value());
                         spot.formats.push_back(format);
                     } else if (asset.video) {
@@ -176,7 +173,7 @@ fromOpenRtb(OpenRTB::BidRequest && req,
                     }
                 };
 
-                for (const auto & a: n.asset) {
+                for (const auto & a: nreq.assets) {
                     onAsset(a);
                 }
             }
@@ -184,10 +181,10 @@ fromOpenRtb(OpenRTB::BidRequest && req,
 #if 0
             if (imp.banner) {
                 auto & b = *imp.banner;
-                
+
                 if (b.w.size() != b.h.size())
                     THROW(openrtbBidRequestError) <<("widths and heights must match");
-                
+
                 for (unsigned i = 0;  i < b.w.size();  ++i) {
                     int w = b.w[i];
                     int h = b.h[i];
@@ -212,9 +209,9 @@ fromOpenRtb(OpenRTB::BidRequest && req,
                 if (!b.mimes.empty()) {
                     // We must have specified a MIME type and it must be
                     // supported by the exchange.
-                    
+
                 }
-            
+
             }
 
             if (!imp.displaymanager.empty()) {
@@ -270,7 +267,7 @@ fromOpenRtb(OpenRTB::BidRequest && req,
             result->url = Url(result->app->bundle);
         else if (result->app->id)
             result->url = Url("http://" + result->app->id.toString() + ".appid/");
-        
+
         // Adding IAB categories to segments
         for(auto& v : result->app->cat) {
             result->segments.add("iab-categories", v.val);
@@ -296,7 +293,7 @@ fromOpenRtb(OpenRTB::BidRequest && req,
             l.cityName = g.city;
             l.postalCode = g.zip;
             if(!g.metro.empty())
-                l.metro = boost::lexical_cast<int> (g.metro);            
+                l.metro = boost::lexical_cast<int> (g.metro);
 // TODO DMA
         }
     }
@@ -334,7 +331,7 @@ fromOpenRtb(OpenRTB::BidRequest && req,
             result->userAgentIPHash = Id(CityHash64(strToHash.c_str(), strToHash.length()));
             result->userIds.add(result->userAgentIPHash, ID_PROVIDER);
         }
-        
+
         else
             result->userIds.add(Id(0), ID_PROVIDER);
 
@@ -389,7 +386,7 @@ fromOpenRtb(OpenRTB::BidRequest && req,
     result->ext = std::move(req.ext);
 
     result->segments.addStrings("openrtb-wseat", req.wseat);
-    
+
     return result.release();
 }
 
@@ -397,7 +394,7 @@ OpenRTB::BidRequest toOpenRtb(const BidRequest &req)
 {
     OpenRTB::BidRequest result;
 
-    result.id = req.auctionId; 
+    result.id = req.auctionId;
     result.at = req.auctionType;
     result.tmax = req.timeAvailableMs;
     result.unparseable = req.unparseable;

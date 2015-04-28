@@ -380,14 +380,8 @@ struct DefaultDescription<OpenRTB::NativeTitle>
 };
 
 template<>
-struct DefaultDescription<OpenRTB::NativeImage>
-    : public StructureDescription<OpenRTB::NativeImage> {
-    DefaultDescription();
-};
-
-template<>
-struct DefaultDescription<OpenRTB::NativeVideo>
-    : public StructureDescription<OpenRTB::NativeVideo> {
+struct DefaultDescription<OpenRTB::NativeImg>
+    : public StructureDescription<OpenRTB::NativeImg> {
     DefaultDescription();
 };
 
@@ -400,6 +394,12 @@ struct DefaultDescription<OpenRTB::NativeData>
 template<>
 struct DefaultDescription<OpenRTB::NativeAsset>
     : public StructureDescription<OpenRTB::NativeAsset> {
+    DefaultDescription();
+};
+
+template<>
+struct DefaultDescription<OpenRTB::NativeRequestObj>
+    : public StructureDescription<OpenRTB::NativeRequestObj> {
     DefaultDescription();
 };
 

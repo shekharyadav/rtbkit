@@ -78,13 +78,8 @@ NativeTitle::
 {
 }
 
-NativeImage::
-~NativeImage()
-{
-}
-
-NativeVideo::
-~NativeVideo()
+NativeImg::
+~NativeImg()
 {
 }
 
@@ -95,6 +90,11 @@ NativeData::
 
 NativeAsset::
 ~NativeAsset()
+{
+}
+
+NativeRequestObj::
+~NativeRequestObj()
 {
 }
 
